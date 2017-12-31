@@ -2,6 +2,8 @@ package nao.cycledev.algorithms.part1.week1;
 
 import org.junit.Test;
 
+import java.util.Arrays;
+
 import static org.junit.Assert.*;
 
 public class QuickFindTest {
@@ -10,7 +12,9 @@ public class QuickFindTest {
 
   @Test
   public void quickFind() {
-    QuickFind qf = new QuickFind(10);
+    long start = System.currentTimeMillis();
+
+    UnionFind qf = new QuickFind(10);
 
     qf.union(4, 3);
     qf.union(3, 8);
@@ -27,7 +31,11 @@ public class QuickFindTest {
     assertFalse(qf.connected(0, 8));
     assertFalse(qf.connected(4, 5));
 
-    assertArrayEquals(expected, qf.getElements());
-    System.out.println(qf);
+    assertEquals(2, qf.count);
+
+    assertArrayEquals(expected, qf.elements);
+
+    System.out.println(Arrays.toString(qf.elements));
+    System.out.println("Duration (ms): " + (System.currentTimeMillis() - start));
   }
 }

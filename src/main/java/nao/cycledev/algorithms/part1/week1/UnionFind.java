@@ -1,35 +1,29 @@
 package nao.cycledev.algorithms.part1.week1;
 
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 public class UnionFind {
 
-  private int[] elements;
+  public int[] elements;
+  public int count;
 
   public UnionFind(int n) {
-    fillElements(n);
-  }
-
-  public void union(int p, int q) {
-    elements[q] = elements[p];
-  }
-
-  public boolean connected(int p, int q) {
-    return elements[p] == elements[q];
-  }
-
-  private void fillElements(int n) {
+    count = n;
     elements = new int[n];
     for (int i = 0; i < n ; i++) {
       elements[i] = i;
     }
   }
 
-  public int getComponentsCount() {
-    //Set<Integer> components = new HashSet<>(Arrays.asList(elements));
-    return 0;//components.size();
+  public boolean connected(int p, int q) {
+    return find(p) == find(q);
+  }
+
+  protected void union(int p, int q) {
+  }
+
+  protected int find(int p) {
+    return 0;
   }
 
   @Override
