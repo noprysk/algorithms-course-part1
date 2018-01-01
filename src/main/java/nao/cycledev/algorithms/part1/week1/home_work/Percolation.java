@@ -4,21 +4,23 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
 
-    private final int BLOCKED = 0;
-    private final int OPEN = 1;
-    private int[][] grid;
+    private boolean[][] grid;
     private int openSites = 0;
-    private WeightedQuickUnionUF unionFind;
-    private int rowSize;
+    private final WeightedQuickUnionUF unionFind;
+    private final int rowSize;
 
     public Percolation(int n) {
-        grid = new int[n][n];
+        if (n <= 0) {
+            throw new IllegalArgumentException();
+        }
+
+        grid = new boolean[n][n];
         rowSize = n;
         unionFind = new WeightedQuickUnionUF(n * n + 2);
 
-        for (int i = 0; i < n ; i++) {
+        for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                grid[i][j] = BLOCKED;
+                grid[i][j] = false;
             }
         }
     }
@@ -31,33 +33,37 @@ public class Percolation {
             throw new IllegalArgumentException();
         }
 
-        grid[i][j] = OPEN;
+        if (grid[i][j]) {
+            return;
+        }
+
+        grid[i][j] = true;
 
         if (i == 0) {
-            unionFind.union(0, toArrayIndex(i, j));
+            unionFind.union(toArrayIndex(i, j), 0);
         }
 
         if (i == rowSize - 1) {
-            unionFind.union((rowSize * rowSize) + 1, toArrayIndex(i, j));
+            unionFind.union(toArrayIndex(i, j), rowSize * rowSize +1);
         }
 
         if ((i + 1) < rowSize) {
-            if (grid[i + 1][j] == OPEN)
+            if (grid[i + 1][j])
                 unionFind.union(toArrayIndex(i, j), toArrayIndex(i + 1, j));
         }
 
         if ((i - 1) >= 0) {
-            if (grid[i - 1][j] == OPEN)
+            if (grid[i - 1][j])
                 unionFind.union(toArrayIndex(i, j), toArrayIndex(i - 1, j));
         }
 
         if ((j + 1) < rowSize) {
-            if (grid[i][j + 1] == OPEN)
+            if (grid[i][j + 1])
                 unionFind.union(toArrayIndex(i, j), toArrayIndex(i, j + 1));
         }
 
         if ((j - 1) >= 0) {
-            if (grid[i][j - 1] == OPEN)
+            if (grid[i][j - 1])
                 unionFind.union(toArrayIndex(i, j), toArrayIndex(i, j - 1));
         }
 
@@ -70,14 +76,21 @@ public class Percolation {
 
     public boolean isOpen(int row, int col) {
         if (!isValidIndex(row - 1, col - 1)) {
-            throw new IllegalArgumentException("row = " + row + "or col= " + col + " is invalid.");
+            throw new IllegalArgumentException();
         }
 
-        return grid[row - 1][col - 1] == OPEN;
+        return grid[row - 1][col - 1];
     }
 
     public boolean isFull(int row, int col) {
-        return unionFind.connected(toArrayIndex(row - 1, col - 1), 0 );
+        if (!isValidIndex(row - 1, col - 1)) {
+            throw new IllegalArgumentException();
+        }
+        if (!isOpen(row, col)) {
+            return false;
+        }
+
+        return unionFind.connected(0, toArrayIndex(row - 1, col - 1));
     }
 
     public int numberOfOpenSites() {
@@ -85,7 +98,7 @@ public class Percolation {
     }
 
     public boolean percolates() {
-        return unionFind.connected(0, rowSize * rowSize + 1 );
+        return unionFind.connected(0, rowSize * rowSize + 1);
     }
 
     private boolean isValidIndex(int i, int j) {
