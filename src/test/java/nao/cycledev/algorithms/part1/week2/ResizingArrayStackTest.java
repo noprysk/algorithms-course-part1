@@ -11,11 +11,11 @@ public class ResizingArrayStackTest {
         ResizingArrayStack<String> stack = new ResizingArrayStack<>(10);
 
         for (int i = 0; i < 100; i++) {
-            stack.push(String.valueOf(i));
+            stack.enqueue(String.valueOf(i));
         }
 
         for (int i = 0; i < 100; i++) {
-            stack.pop();
+            stack.dequeue();
         }
 
         System.out.println("Duration (ms): " + (System.currentTimeMillis() - start));
