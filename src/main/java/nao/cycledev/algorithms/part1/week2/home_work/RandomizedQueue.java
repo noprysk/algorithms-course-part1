@@ -1,19 +1,23 @@
 package nao.cycledev.algorithms.part1.week2.home_work;
 
+import edu.princeton.cs.algs4.StdRandom;
+
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public class RandomizedQueue<Item> implements Iterable<Item> {
     private int capacity = 1;
     private int n = 0;
     private Item[] queue;
+    private int[] orderIndex;
 
     public RandomizedQueue() {
         queue = (Item[]) new Object[capacity];
     }
 
     public boolean isEmpty() {
-        return false;
+        return n == 0;
     }
 
     public int size() {
@@ -21,6 +25,10 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     }
 
     public void enqueue(Item item) {
+        if (item == null) {
+            throw new IllegalArgumentException();
+        }
+
         if (capacity < n + 1) {
             resizeQueue(2 * capacity);
         }
@@ -28,26 +36,49 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         queue[n++] = item;
     }
 
-    // remove and return a random item
     public Item dequeue() {
-        Item item = queue[--n];
+        if (isEmpty()) {
+            throw new NoSuchElementException();
+        }
+
+        int index = StdRandom.uniform(n);
+        Item item = queue[index];
+        queue[index] = queue[--n];
         queue[n] = null;
 
-        if (n > 0 && n == capacity / 4) {
+        if (n > 0 && n < capacity / 4) {
             resizeQueue(capacity / 2);
         }
 
         return item;
     }
 
-    // return a random item (but do not remove it)
     public Item sample() {
-        return null;
+        if (isEmpty()) {
+            throw new NoSuchElementException();
+        }
+
+        return queue[StdRandom.uniform(n)];
     }
 
-    // return an independent iterator over items in random order
     public Iterator<Item> iterator() {
-        return null;
+        orderIndex = new int[n];
+        for (int i = 0; i < orderIndex.length ; i++) {
+            orderIndex[i] = i;
+        }
+
+        StdRandom.shuffle(orderIndex);
+        return new ListIterator();
+    }
+
+    private boolean arrayContains(int[] a, int el) {
+        for (int i = 0; i < a.length; i++) {
+            if (a[i] == el) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void resizeQueue(int capacity) {
@@ -65,6 +96,26 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     @Override
     public String toString() {
         return Arrays.toString(queue);
+    }
+
+    private class ListIterator implements Iterator<Item> {
+        private int index;
+
+        public boolean hasNext() {
+            return index < n;
+        }
+
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
+
+        public Item next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+
+            return queue[orderIndex[index++]];
+        }
     }
 }
 
