@@ -37,7 +37,6 @@ public class RandomizedQueueTest {
         queue.dequeue();
 
         assertEquals(2, queue.size());
-        System.out.println(queue);
     }
 
     @Test
@@ -70,6 +69,5 @@ public class RandomizedQueueTest {
         }
         System.out.print("]");
         System.out.println();
-        System.out.println(queue);
     }
 }

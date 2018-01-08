@@ -2,7 +2,6 @@ package nao.cycledev.algorithms.part1.week2.home_work;
 
 import edu.princeton.cs.algs4.StdRandom;
 
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -10,7 +9,6 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
     private int capacity = 1;
     private int n = 0;
     private Item[] queue;
-    private int[] orderIndex;
 
     public RandomizedQueue() {
         queue = (Item[]) new Object[capacity];
@@ -32,7 +30,6 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         if (capacity < n + 1) {
             resizeQueue(2 * capacity);
         }
-
         queue[n++] = item;
     }
 
@@ -49,7 +46,6 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         if (n > 0 && n < capacity / 4) {
             resizeQueue(capacity / 2);
         }
-
         return item;
     }
 
@@ -57,49 +53,36 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         if (isEmpty()) {
             throw new NoSuchElementException();
         }
-
         return queue[StdRandom.uniform(n)];
     }
 
     public Iterator<Item> iterator() {
-        orderIndex = new int[n];
-        for (int i = 0; i < orderIndex.length ; i++) {
-            orderIndex[i] = i;
-        }
-
-        StdRandom.shuffle(orderIndex);
         return new ListIterator();
     }
 
-    private boolean arrayContains(int[] a, int el) {
-        for (int i = 0; i < a.length; i++) {
-            if (a[i] == el) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private void resizeQueue(int capacity) {
-        this.capacity = capacity;
+    private void resizeQueue(int size) {
+        this.capacity = size;
         Item[] oldQueue = queue;
 
         queue = (Item[]) new Object[capacity];
-        for (int i = 0; i < oldQueue.length ; i++) {
+        for (int i = 0; i < oldQueue.length; i++) {
             if (oldQueue[i] != null) {
                 queue[i] = oldQueue[i];
             }
         }
     }
 
-    @Override
-    public String toString() {
-        return Arrays.toString(queue);
-    }
-
     private class ListIterator implements Iterator<Item> {
         private int index;
+        private final int[] orderIndex;
+
+        public ListIterator() {
+            orderIndex = new int[n];
+            for (int i = 0; i < orderIndex.length; i++) {
+                orderIndex[i] = i;
+            }
+            StdRandom.shuffle(orderIndex);
+        }
 
         public boolean hasNext() {
             return index < n;
@@ -113,7 +96,6 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }
-
             return queue[orderIndex[index++]];
         }
     }

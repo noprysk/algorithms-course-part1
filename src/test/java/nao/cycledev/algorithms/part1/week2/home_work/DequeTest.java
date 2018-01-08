@@ -64,4 +64,16 @@ public class DequeTest {
         assertEquals(3, deque.size());
         assertArrayEquals(expected, actual);
     }
+
+    @Test
+    public void test() {
+
+        Deque<Integer> deque = new Deque<>();
+        deque.addFirst(0);
+        deque.addFirst(1);
+        deque.removeFirst(); //    ==> 1
+        deque.removeFirst();
+
+        assertEquals(0, deque.size());
+    }
 }
